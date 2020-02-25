@@ -2,7 +2,7 @@
 
 const assert = require('assert');
 
-const utils = require('../untils/untils');
+const utils = require('../utils/utils');
 
 const logger = require('../untils/logger');
 
@@ -48,6 +48,60 @@ function testTransformChunkIntoLines(){
 
 }
 
+function testParseUrl(){
+    const testcases = [
+        'http://testcase.com',
+        'http://testcase.com/book/page/5',
+        'http://testcase.com:8080',
+        'http://testcase.com:8080/book/page/5'
+    ];
+
+    const expects = [
+        {
+            protocol: 'http:',
+            hostname: 'testcase.com',
+            port: null,
+            path: '/',
+            pathComponents: []
+        },
+        {
+            protocol: 'http:',
+            hostname: 'testcase.com',
+            port: null,
+            path: '/book/page/5',
+            pathComponents: ['book', 'page', '5']
+        },
+        {
+            protocol: 'http:',
+            hostname: 'testcase.com',
+            port: null,
+            path: '/',
+            pathComponents: []
+        },
+        {
+            protocol: 'http:',
+            hostname: 'testcase.com',
+            port: 8080,
+            path: '/book/page/5',
+            pathComponents: ['book', 'page', '5']
+        }
+    ]
+    try{
+        testcases.forEach ((value, index) => {
+            let parsedUrl = utils.parseUrl(value);
+            assert.equal(parsedUrl.protocol, expects[index].protocol);
+            assert.equal(parsedUrl.hostname, expects[index].hostname);
+            assert.equal(parsedUrl.path, expects[index].path);
+            assert.strict.deepStrictEqual(parsedUrl.pathComponents, expects[index].pathComponents);
+        });
+        
+        logger.info('PASS TESTCASE', 'testParseUrl()');
+    }catch(err){
+        logger.error(err.message, 'testParseUrl()');
+    }
+
+}
 (function mainline() {
     testTransformChunkIntoLines();
+    testParseUrl();
 })();

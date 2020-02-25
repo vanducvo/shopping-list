@@ -4,6 +4,7 @@
   "description": "The Shopping lists MVP",
   "main": "server.js",
   "scripts": {
+    "server": "nodemon server.js",
     "load-db": "node ./untils/load-db",
     "test": "node ./test/functional-test",
     "unit-test": "node ./test/unit-test"
