@@ -35,4 +35,42 @@ function findById(id){
     });
 }
 
+function findByDescription(partialDescription){
+    logger.debug('Search item by partial description', 'findByDescription()');
+    return new Promise((resolve, reject) => {
+        let query = `${SELECT} ${FROM} WHERE item.description LIKE ?`;
+        db.all(query, `%${partialDescription}%`, (err, items) => {
+            if(err){
+                let message = `Error when run query: ${err.message}`;
+                logger.error(message);
+                reject(utils.createJSON(500, {query, err}));
+            }else{
+                let statusCode = items.length ? 200 : 404;
+                resolve(utils.createJSON(items.length, items));
+            }
+        });
+    });
+}
+
+function findByUpc(upc){
+    logger.debug('Search item by UPC', 'findByDescription()');
+    return new Promise((resolve, reject) => {
+        let query = `${SELECT} ${FROM} WHERE item.upc = ?`;
+        console.log(query);
+        db.get(query, upc, (err, items) => {
+            if(err){
+                let message = `Error when run query: ${err.message}`;
+                logger.error(message);
+                reject(utils.createJSON(500, {query, err}));
+            } else if (items){
+                resolve(utils.createJSON(200, items));
+            } else {
+                resolve(utils.createJSON(404, {}));
+            }
+        });
+    });
+}
+
 module.exports.findById = findById;
+module.exports.findByDescription = findByDescription;
+module.exports.findByUpc = findByUpc;

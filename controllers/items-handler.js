@@ -15,6 +15,23 @@ function handleItemsSearch(request, parsedUrl, resolve, reject){
         }).catch((err) => {
             reject(err);
         });
+    }else if (query.description) {
+        logger.debug('Search By Descripton', 'handleItemsSearch()');
+
+        models.findByDescription(query.description).then((data) => {
+            resolve(data);
+        }).catch((err) => {
+            reject(err);
+        });
+    }else if (query.upc){
+        logger.debug('Search By Upc', 'handleItemsSearch()');
+
+        models.findByUpc(query.upc).then((data) => {
+            resolve(data);
+        }).catch((err) => {
+
+            reject(err);
+        });
     } else {
         reject( utils.createJSON(400, "Not Have Need Arguments"));
     }

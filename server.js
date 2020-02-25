@@ -4,6 +4,9 @@ const http = require('http');
 const routes = require('./controllers/routes');
 const appSettings = require('./config/app-settings')
 const utils = require('./utils/utils');
+const logger = require('./utils/logger');
+
+logger.setLogLevel(logger.debug);
 
 const server = http.createServer((request, response) => {
     if (request.url.startsWith('/items')){
