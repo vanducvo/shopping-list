@@ -7,7 +7,8 @@
     "server": "nodemon server.js",
     "load-db": "node ./untils/load-db",
     "test": "node ./test/functional-test",
-    "unit-test": "node ./test/unit-test"
+    "unit-test": "node ./test/unit-test",
+    "functional-test": "node ./test/functional-test"
   },
   "repository": {
     "type": "git",

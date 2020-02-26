@@ -56,7 +56,6 @@ function findByUpc(upc){
     logger.debug('Search item by UPC', 'findByDescription()');
     return new Promise((resolve, reject) => {
         let query = `${SELECT} ${FROM} WHERE item.upc = ?`;
-        console.log(query);
         db.get(query, upc, (err, items) => {
             if(err){
                 let message = `Error when run query: ${err.message}`;
