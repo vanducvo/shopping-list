@@ -25,8 +25,32 @@ function request(url, method, postdata){
             });
         } else {
             options = {
-
+                hostname: appSettings.server_host,
+                port: appSettings.server_listen_port,
+                path: encodeURI(url),
+                method: method,
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Content-Length': Buffer.byteLength(postdata)
+                }
             }
+            let req = http.request(options, (response) => {
+                let data = '';
+                response.on('data', (chunk) => {
+                    data += chunk;
+                });
+
+                response.on('end', () => {
+                    resolve(data);
+                });
+
+                response.on('error', (err)=>{
+                    reject(error);
+                });
+            });
+
+            req.write(postdata);
+            req.end();
         }
     });
 }
@@ -137,8 +161,41 @@ function testcaseGetByUPC(){
     }
 }
 
+function testCreateList(){
+    let testcases = [
+        {
+            url: '/lists',
+            method: 'POST',
+            postData: '{"description": "my-list"}'
+        }
+    ];
+
+    try{
+        testcases.forEach((value, index) => {
+            request(value.url, value.method, value.postData).then((data) => {
+                try{
+                    let json = JSON.parse(data);
+                    
+                    if (json.hasOwnProperty('lastID')){
+                        logger.info("PASS TESTCASE", 'testCreateList()');
+                    }else{
+                        logger.info("FAIL TESTCASE", 'testCreateList()');
+                    }
+                } catch(err){
+                    logger.info("FAIL TESTCASE", 'testCreateList()');
+                    logger.error(`ERROR: ${err.message}`, 'testcaseGetByUPC()');s
+                }
+            });
+        });
+    }catch(error){
+        logger.info("FAIL TESTCASE", 'testCreateList()');
+        logger.error(`ERROR: ${err.message}`, 'testcaseGetByUPC()');
+    }
+}
+
 (function mainline(){
     testcaseGetById();
     testcaseGetByDescription();
     testcaseGetByUPC();
+    testCreateList();
 })();

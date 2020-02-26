@@ -10,8 +10,13 @@ logger.setLogLevel(logger.debug);
 
 const server = http.createServer((request, response) => {
     if (request.url.startsWith('/items')){
-        response.statusCode = 200;
         routes.routeItemsRequest(request).then((data) => {
+            utils.writeReponseItemsRequest(data, response);
+        }).catch((err) => {
+            utils.writeReponseItemsRequest(err, response);
+        });
+    } else if (request.url.startsWith('/lists')){
+        routes.routeListsRequest(request).then((data) => {
             utils.writeReponseItemsRequest(data, response);
         }).catch((err) => {
             utils.writeReponseItemsRequest(err, response);
