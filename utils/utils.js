@@ -66,9 +66,30 @@ function getDatabase(){
     return db;
 }
 
+
+function getBodyRequest(request){
+    return new Promise((resolve, reject)=>{
+        let chunks = [];
+        request.on('data', (chunk)=>{
+            chunks.push(chunk);
+        });
+
+        request.on('error', (err)=>{
+            reject(err);
+        });
+
+        request.on('end', ()=>{
+            let data = Buffer.concat(chunks).toString();
+            resolve(data);
+        });
+    });
+}
+
+
 module.exports.transformChunkIntoLines = transformChunkIntoLines;
 module.exports.parseUrl = parseUrl;
 module.exports.messageNotSupport = messageNotSupport;
 module.exports.getDatabase = getDatabase;
 module.exports.createJSON = createJSON;
 module.exports.writeReponseItemsRequest = writeReponseItemsRequest;
+module.exports.getBodyRequest = getBodyRequest;
