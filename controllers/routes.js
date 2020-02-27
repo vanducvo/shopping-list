@@ -43,7 +43,6 @@ function routeListsRequest(request){
 
         switch(parsedUrl.pathComponents.length){
             case 1:
-
                 routeListsOnly(request, parsedUrl, resolve, reject);
                 break;
             case 2:
@@ -74,9 +73,10 @@ function routeListsOnlyWithId(request, parsedUrl, resolve, reject){
             listsHandler.handleFindListById(request, parsedUrl, resolve, reject);
             break;
         case 'PUT':
+            listsHandler.handleUpdateList(request, parsedUrl, resolve, reject);
             break;
         default:
-            let message = utils.messageNotSupport(request.method, resquest.url);
+            let message = utils.messageNotSupport(request.method, request.url);
             reject(utils.createJSON(400, message));
             break;
     }

@@ -184,7 +184,7 @@ function testCreateList(){
                     pass = pass & json.hasOwnProperty('lastID')
                 } catch(err){
                     
-                    logger.error(`ERROR: ${err.message}`, 'testcaseGetByUPC()');s
+                    logger.error(`ERROR: ${err.message}`, 'testCreateList()');s
                 }
             });
         });
@@ -196,7 +196,46 @@ function testCreateList(){
         }
     }catch(error){
         logger.info("FAIL TESTCASE", 'testCreateList()');
-        logger.error(`ERROR: ${err.message}`, 'testcaseGetByUPC()');
+        logger.error(`ERROR: ${err.message}`, 'testCreateList()');
+    }
+}
+
+function testUpdateList(){
+    let testcases = [
+        {
+            url: '/lists/1',
+            method: 'PUT',
+            postData: '{"description": "test-list-1-modify"}'
+        },
+        {
+            url: '/lists/2',
+            method: 'PUT',
+            postData: '{"description": "test-list-2-modify"}'
+        }
+    ];
+
+    try{
+        let pass = true;
+        testcases.forEach((value, index) => {
+            request(value.url, value.method, value.postData).then((data) => {
+                try{
+                    let json = JSON.parse(data);
+                    pass = pass & json.hasOwnProperty('changes')
+                } catch(err){
+                    
+                    logger.error(`ERROR: ${err.message}`, 'testUpdateList()');s
+                }
+            });
+        });
+
+        if (pass){
+            logger.info("PASS TESTCASE", 'testUpdateList()');
+        } else {
+            logger.info("FAIL TESTCASE", 'testUpdateList()');
+        }
+    }catch(error){
+        logger.info("FAIL TESTCASE", 'testUpdateList()');
+        logger.error(`ERROR: ${err.message}`, 'testUpdateList()');
     }
 }
 
@@ -205,4 +244,5 @@ function testCreateList(){
     testcaseGetByDescription();
     testcaseGetByUPC();
     testCreateList();
+    testUpdateList();
 })();
