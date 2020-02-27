@@ -20,4 +20,21 @@ function handleListCreate(request, parsedUrl, resolve, reject){
   
 }
 
+function handleFindListById(request, parsedUrl, resolve, reject){
+    let idstr = parsedUrl.pathComponents[1];
+    let regex = /^\d+$/;
+    if (regex.test(idstr)){
+        let id = Number.parseInt(idstr);
+        models.findShopingListById(id).then((data)=>{
+            resolve(data);
+        }).catch((err)=>{
+            reject(err);
+        });
+    }else{
+        reject(utils.createJSON(400, 'Request Id not Number'));
+    }
+}
+
+
 module.exports.handleListCreate = handleListCreate;
+module.exports.handleFindListById = handleFindListById;

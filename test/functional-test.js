@@ -166,27 +166,34 @@ function testCreateList(){
         {
             url: '/lists',
             method: 'POST',
-            postData: '{"description": "my-list"}'
+            postData: '{"description": "test-list1"}'
+        },
+        {
+            url: '/lists',
+            method: 'POST',
+            postData: '{"description": "test-list2"}'
         }
     ];
 
     try{
+        let pass = true;
         testcases.forEach((value, index) => {
             request(value.url, value.method, value.postData).then((data) => {
                 try{
                     let json = JSON.parse(data);
-                    
-                    if (json.hasOwnProperty('lastID')){
-                        logger.info("PASS TESTCASE", 'testCreateList()');
-                    }else{
-                        logger.info("FAIL TESTCASE", 'testCreateList()');
-                    }
+                    pass = pass & json.hasOwnProperty('lastID')
                 } catch(err){
-                    logger.info("FAIL TESTCASE", 'testCreateList()');
+                    
                     logger.error(`ERROR: ${err.message}`, 'testcaseGetByUPC()');s
                 }
             });
         });
+
+        if (pass){
+            logger.info("PASS TESTCASE", 'testCreateList()');
+        } else {
+            logger.info("FAIL TESTCASE", 'testCreateList()');
+        }
     }catch(error){
         logger.info("FAIL TESTCASE", 'testCreateList()');
         logger.error(`ERROR: ${err.message}`, 'testcaseGetByUPC()');

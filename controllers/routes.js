@@ -36,13 +36,18 @@ function routeItemsOnly(request, parsedUrl, resolve, reject){
 function routeListsRequest(request){
     return new Promise((resolve, reject) => {
         let parsedUrl = utils.parseUrl(request.url);
+
+        if (parsedUrl.pathComponents[0] != 'lists'){
+            reject(utils.createJSON(400, 'Request List Reject'));
+        };
+
         switch(parsedUrl.pathComponents.length){
             case 1:
-                if (parsedUrl.pathComponents[0] == 'lists'){
-                    routeListsOnly(request, parsedUrl, resolve, reject);
-                } else{
-                    reject(utils.createJSON(400, 'Request List Reject'));
-                }
+
+                routeListsOnly(request, parsedUrl, resolve, reject);
+                break;
+            case 2:
+                routeListsOnlyWithId(request, parsedUrl, resolve, reject);
                 break;
             default:
                 reject(utils.createJSON(400, 'Request List Reject'));
@@ -55,6 +60,20 @@ function routeListsOnly(request, parsedUrl, resolve, reject){
     switch(request.method){
         case 'POST':
             listsHandler.handleListCreate(request, parsedUrl, resolve, reject);
+            break;
+        default:
+            let message = utils.messageNotSupport(request.method, request.url);
+            reject(utils.createJSON(400, message));
+            break;
+    }
+}
+
+function routeListsOnlyWithId(request, parsedUrl, resolve, reject){
+    switch(request.method){
+        case 'GET':
+            listsHandler.handleFindListById(request, parsedUrl, resolve, reject);
+            break;
+        case 'PUT':
             break;
         default:
             let message = utils.messageNotSupport(request.method, resquest.url);

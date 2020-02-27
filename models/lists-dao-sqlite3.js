@@ -20,4 +20,21 @@ function create(description){
     });
 }
 
+function findShopingListById(id){
+    return new Promise((resolve, reject) => {
+        let query = 'SELECT * FROM shopping_list WHERE id = ?';
+        db.get(query, id, (err, list) => {
+            if(err){
+                logger.error(`Insert Error: ${err.message}`, 'findShopingListById()');
+                reject(utils.createJSON(400, {query, err}));
+            }else if (list){
+                resolve(utils.createJSON(200, list));
+            } else {
+                resolve(utils.createJSON(200, {}));
+            }
+        });
+    });
+}
+
 module.exports.create = create;
+module.exports.findShopingListById = findShopingListById;

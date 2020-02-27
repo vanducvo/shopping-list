@@ -5,4 +5,9 @@ function create(description){
     return listDAO.create(description);
 }
 
+function findShopingListById(id){
+    return listDAO.findShopingListById(id);
+}
+
 module.exports.create = create;
+module.exports.findShopingListById = findShopingListById;
