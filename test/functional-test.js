@@ -239,10 +239,74 @@ function testUpdateList(){
     }
 }
 
+function testGetItemsInShoppingList(){
+    let testcases = [
+        {
+            url: '/lists/1/items',
+            method: 'GET'
+        }
+    ];
+
+    let expects = [
+        [
+            {
+                "shopping_list_id": 1,
+                "shopping_list_description": "test-list-1-modify",
+                "shopping_list_when_created": "2020-02-27 08:47:27",
+                "when_modify": "2020-02-27 08:48:57",
+                "item_id": 1,
+                "upc": "023923330139",
+                "item_description": "Earth's Best Organic Fruit Yogurt Smoothie Mixed Berry",
+                "brand_id": 78,
+                "brand_description": "Earth's Best",
+                "manufacturer": "The Hain Celestial Group, Inc.",
+                "location": "",
+                "website": "",
+                "quantity": 2,
+                "pick_up": 1
+            },
+            {
+                "shopping_list_id": 1,
+                "shopping_list_description": "test-list-1-modify",
+                "shopping_list_when_created": "2020-02-27 08:47:27",
+                "when_modify": "2020-02-27 08:48:57",
+                "item_id": 2,
+                "upc": "688267141676",
+                "item_description": "Ahold Cocoa Almonds",
+                "brand_id": 99,
+                "brand_description": "Ahold",
+                "manufacturer": "Ahold USA, Inc.",
+                "location": "",
+                "website": "",
+                "quantity": 20,
+                "pick_up": 0
+            }
+        ]
+    ];
+    try{
+        let pass = true;
+        testcases.forEach((value, index) => {
+            request(value.url, value.method).then((data)=>{
+                let request = JSON.parse(data);
+                pass = pass &request.hasOwnProperty('shopping_list_id');
+            });
+        });
+        if (pass){
+            logger.info("PASS TESTCASE", 'testGetItemsInShoppingList()');
+        } else {
+            logger.info("FAIL TESTCASE", 'testGetItemsInShoppingList()');
+        };
+    } catch(err){
+        logger.info('FAIL TESTCASE', 'testGetItemsInShoppingList()');
+        logger.error(`ERROR: ${err.message}`, 'testGetItemsInShoppingList()');
+    }
+}
+
 (function mainline(){
     testcaseGetById();
     testcaseGetByDescription();
     testcaseGetByUPC();
     testCreateList();
     testUpdateList();
+    testGetItemsInShoppingList();
 })();

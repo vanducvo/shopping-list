@@ -48,6 +48,9 @@ function routeListsRequest(request){
             case 2:
                 routeListsOnlyWithId(request, parsedUrl, resolve, reject);
                 break;
+            case 3:
+                routeListsItemsOnly(request, parsedUrl, resolve, reject);
+                break;
             default:
                 reject(utils.createJSON(400, 'Request List Reject'));
                 break;
@@ -74,6 +77,21 @@ function routeListsOnlyWithId(request, parsedUrl, resolve, reject){
             break;
         case 'PUT':
             listsHandler.handleUpdateList(request, parsedUrl, resolve, reject);
+            break;
+        default:
+            let message = utils.messageNotSupport(request.method, request.url);
+            reject(utils.createJSON(400, message));
+            break;
+    }
+}
+
+function routeListsItemsOnly(request, parsedUrl, resolve, reject){
+    switch(request.method){
+        case 'GET':
+            listsHandler.handleFindListShoppingItems(request, parsedUrl, resolve, reject);
+            break;
+        case 'POST':
+            listsHandler.handleAddItemToList(request, parsedUrl, resolve, reject);
             break;
         default:
             let message = utils.messageNotSupport(request.method, request.url);

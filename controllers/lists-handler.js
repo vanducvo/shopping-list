@@ -57,7 +57,49 @@ function handleUpdateList(request, parsedUrl, resolve, reject){
     }
 }
 
+function handleFindListShoppingItems(request, parsedUrl, resolve, reject){
+    let idstr = parsedUrl.pathComponents[1];
+    let regex = /^\d+$/;
+    if (regex.test(idstr)){
+        let id = Number.parseInt(idstr);
+        if(parsedUrl.pathComponents[2] == 'items'){
+            models.findListShoppingItemsById(id).then((data)=>{
+                resolve(data);
+            }).catch((err)=>{
+                reject(err);
+            });
+        }else{
+            let message = utils.messageNotSupport(request.method, request.url);
+            reject(utils.createJSON(400, message));
+            logger.error(message, 'handleFindListShoppingItems()');
+        }
+    }else{
+        logger.error(err.message, 'handleFindListShoppingItems()');
+        reject(utils.createJSON(400, 'Request Id not Number'));
+    }
+}
+
+function handleAddItemToList(request, parsedUrl, resolve, reject){
+    let idstr = parsedUrl.pathComponents[1];
+    let regex = /^\d+$/;
+    if (regex.test(idstr)){
+        let id = Number.parseInt(idstr);
+        if(parsedUrl.pathComponents[2] == 'items'){
+            let query = parsedUrl.query;
+            models.addItemToList(query.listid, query.itemid, query.quantity);
+        }else{
+            let message = utils.messageNotSupport(request.method, request.url);
+            reject(utils.createJSON(400, message));
+            logger.error(message, 'handleFindListShoppingItems()');
+        }
+    }else{
+        logger.error(err.message, 'handleFindListShoppingItems()');
+        reject(utils.createJSON(400, 'Request Id not Number'));
+    }
+}
 
 module.exports.handleListCreate = handleListCreate;
 module.exports.handleFindListById = handleFindListById;
 module.exports.handleUpdateList = handleUpdateList;
+module.exports.handleFindListShoppingItems = handleFindListShoppingItems;
+module.exports.handleAddItemToList = handleAddItemToList;
