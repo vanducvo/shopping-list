@@ -85,7 +85,7 @@ function findListShoppingItemsById(id){
 
 function addItemToList(listId, itemId, quantity){
     return new Promise((resolve, reject)=>{
-        let query = 'INSERT INTO shopping_list_item VALUES (?,?,?)';
+        let query = 'INSERT INTO shopping_list_item(shopping_list_id, item_id, quantity, pick_up) VALUES (?,?,?,1)';
         db.run(query, listId, itemId, quantity, function (err){
             if(err){
                 logger.error(`Get Error: ${err.message}`, 'findListShoppingItemsById()');
@@ -97,8 +97,60 @@ function addItemToList(listId, itemId, quantity){
     });
 }
 
+function updateItemsInList(listId, itemId, quantity, pick_up){
+    let param = {
+        description: '',
+        values: []
+    };
+
+    if (Number.isInteger(quantity)){
+        param.description += 'quantity = ?';
+        param.values.push(quantity);
+    }
+
+    if(Number.isInteger(pick_up)){
+        param.description += (Number.isInteger(quantity) ? ', pick_up = ?': 'pick_up = ?');
+        param.values.push(pick_up);
+    }
+    
+    return new Promise((resolve, reject) => {
+        if(param.description == ''){
+            let message = `Not Null Both quantity and pick_up`;
+            logger.error(message, 'updateItemsInList()');
+            reject(utils.createJSON(400, message));
+        }
+        param.values.push(itemId, listId);
+        let query = `UPDATE shopping_list_item SET ${param.description} WHERE item_id = ? AND shopping_list_id = ?`;
+        db.run(query, param.values, function (err) {
+            if(err){
+                logger.error(`Get Error: ${err.message}`, 'findListShoppingItemsById()');
+                reject(utils.createJSON(400, {query, err}));
+            } else {
+                resolve(utils.createJSON(200, {changes: this.changes}));
+            }
+        });
+    });
+
+}
+
+function deleteItemInList(listId, itemId){
+    return new Promise((resolve, reject) => {
+        let query = 'DELETE FROM shopping_list_item WHERE item_id = ? AND shopping_list_id = ?';
+        db.run(query, itemId, listId, function (err) {
+            if(err){
+                logger.error(`Get Error: ${err.message}`, 'findListShoppingItemsById()');
+                reject(utils.createJSON(400, {query, err}));
+            }else{
+                resolve(utils.createJSON(200, {changes: this.changes}));
+            }
+        });
+    });
+}
+
 module.exports.create = create;
 module.exports.findShopingListById = findShopingListById;
 module.exports.update = update;
 module.exports.findListShoppingItemsById = findListShoppingItemsById;
 module.exports.addItemToList = addItemToList;
+module.exports.updateItemsInList = updateItemsInList;
+module.exports.deleteItemInList = deleteItemInList;

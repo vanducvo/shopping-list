@@ -100,9 +100,15 @@ function testcaseGetById(){
             request(value.url, value.method).then((data)=>{
                 let request = JSON.parse(data);
                 assert.strict.deepStrictEqual(request, expects[index]);
+                return true;
+            }).then((pass)=>{
+                if (pass){
+                    logger.info("PASS TESTCASE", 'testCreateList()');
+                } else {
+                    logger.info("FAIL TESTCASE", 'testCreateList()');
+                }
             });
         });
-        logger.info('PASS TESTCASE', 'testcaseGetById()');
     } catch(err){
         logger.info('FAIL TESTCASE', 'testcaseGetById()');
         logger.error(`ERROR: ${err.message}`, 'testcaseGetById()');
@@ -126,9 +132,16 @@ function testcaseGetByDescription(){
             request(value.url, value.method).then((data)=>{
                 let request = JSON.parse(data);
                 assert.strict.deepStrictEqual(request[0], expects[index]);
+                return true;
+            }).then((pass) => {
+                if (pass){
+                    logger.info("PASS TESTCASE", 'testcaseGetByDescription()');
+                } else {
+                    logger.info("FAIL TESTCASE", 'testcaseGetByDescription()');
+                }
             });
         });
-        logger.info('PASS TESTCASE', 'testcaseGetByDescription()');
+        
     } catch(err){
         logger.info('FAIL TESTCASE', 'testcaseGetByDescription()');
         logger.error(`ERROR: ${err.message}`, 'testcaseGetByDescription()');
@@ -152,9 +165,15 @@ function testcaseGetByUPC(){
             request(value.url, value.method).then((data)=>{
                 let request = JSON.parse(data);
                 assert.strict.deepStrictEqual(request, expects[index]);
+                return true;
+            }).then((pass) => {
+                if (pass){
+                    logger.info("PASS TESTCASE", 'testcaseGetByUPC()');
+                } else {
+                    logger.info("FAIL TESTCASE", 'testcaseGetByUPC()');
+                }
             });
         });
-        logger.info('PASS TESTCASE', 'testcaseGetByUPC()');
     } catch(err){
         logger.info('FAIL TESTCASE', 'testcaseGetByUPC()');
         logger.error(`ERROR: ${err.message}`, 'testcaseGetByUPC()');
@@ -176,24 +195,25 @@ function testCreateList(){
     ];
 
     try{
-        let pass = true;
         testcases.forEach((value, index) => {
             request(value.url, value.method, value.postData).then((data) => {
                 try{
                     let json = JSON.parse(data);
-                    pass = pass & json.hasOwnProperty('lastID')
+                    return json.hasOwnProperty('lastID')
                 } catch(err){
                     
                     logger.error(`ERROR: ${err.message}`, 'testCreateList()');s
                 }
+            }).then((pass) => {
+                if (pass){
+                    logger.info("PASS TESTCASE", 'testCreateList()');
+                } else {
+                    logger.info("FAIL TESTCASE", 'testCreateList()');
+                }
             });
         });
 
-        if (pass){
-            logger.info("PASS TESTCASE", 'testCreateList()');
-        } else {
-            logger.info("FAIL TESTCASE", 'testCreateList()');
-        }
+
     }catch(error){
         logger.info("FAIL TESTCASE", 'testCreateList()');
         logger.error(`ERROR: ${err.message}`, 'testCreateList()');
@@ -215,24 +235,24 @@ function testUpdateList(){
     ];
 
     try{
-        let pass = true;
         testcases.forEach((value, index) => {
             request(value.url, value.method, value.postData).then((data) => {
                 try{
                     let json = JSON.parse(data);
-                    pass = pass & json.hasOwnProperty('changes')
+                    return json.hasOwnProperty('changes')
                 } catch(err){
                     
                     logger.error(`ERROR: ${err.message}`, 'testUpdateList()');s
                 }
+            }).then((pass) => {
+                if (pass){
+                    logger.info("PASS TESTCASE", 'testUpdateList()');
+                } else {
+                    logger.info("FAIL TESTCASE", 'testUpdateList()');
+                }
             });
         });
 
-        if (pass){
-            logger.info("PASS TESTCASE", 'testUpdateList()');
-        } else {
-            logger.info("FAIL TESTCASE", 'testUpdateList()');
-        }
     }catch(error){
         logger.info("FAIL TESTCASE", 'testUpdateList()');
         logger.error(`ERROR: ${err.message}`, 'testUpdateList()');
@@ -284,23 +304,133 @@ function testGetItemsInShoppingList(){
         ]
     ];
     try{
-        let pass = true;
         testcases.forEach((value, index) => {
             request(value.url, value.method).then((data)=>{
-                let request = JSON.parse(data);
-                pass = pass &request.hasOwnProperty('shopping_list_id');
+                let json = JSON.parse(data);
+                return json.length >= 0;
+            }).then((pass)=>{
+                if (pass){
+                    logger.info("PASS TESTCASE", 'testGetItemsInShoppingList()');
+                } else {
+                    logger.info("FAIL TESTCASE", 'testGetItemsInShoppingList()');
+                };
             });
         });
-        if (pass){
-            logger.info("PASS TESTCASE", 'testGetItemsInShoppingList()');
-        } else {
-            logger.info("FAIL TESTCASE", 'testGetItemsInShoppingList()');
-        };
+        
     } catch(err){
         logger.info('FAIL TESTCASE', 'testGetItemsInShoppingList()');
         logger.error(`ERROR: ${err.message}`, 'testGetItemsInShoppingList()');
     }
 }
+
+function testAddItemToList(){
+    let testcases = [
+        {
+            url: '/lists/1/items',
+            method: 'POST',
+            postData: '{"itemid": 50, "quantity": 2}'
+        },
+        {
+            url: '/lists/1/items',
+            method: 'POST',
+            postData: '{"itemid": 40, "quantity": 2}'
+        }
+    ];
+
+    try{
+        let pass = true;
+        testcases.forEach((value, index) => {
+            request(value.url, value.method, value.postData).then((data)=>{
+                let json = JSON.parse(data);
+                return json.hasOwnProperty('lastID');
+            }).then((pass) =>{
+                if (pass){
+                    logger.info("PASS TESTCASE", 'testAddItemToList()');
+                } else {
+                    logger.info("FAIL TESTCASE", 'testAddItemToList()');
+                };
+            });
+        });
+    }catch(err){
+        logger.info("FAIL TESTCASE", 'testAddItemToList()');
+        logger.error(`ERROR: ${err.message}`, 'testAddItemToList()');
+    }
+}
+
+function testUpdateItemsInList(){
+    let testcases = [
+        {
+            url: '/lists/1/items/1',
+            method: 'PUT',
+            postData: '{"pick_up": 0}'
+        },
+        {
+            url: '/lists/1/items/2',
+            method: 'PUT',
+            postData: '{"quantity": 22}'
+        },
+        {
+            url: '/lists/1/items/3',
+            method: 'PUT',
+            postData: '{"pick_up": 0, "quantity": 33}'
+        }
+    ];
+
+    try{
+        testcases.forEach((value, index) => {
+            request(value.url, value.method, value.postData).then((data) => {
+                try{
+                    let json = JSON.parse(data);
+                    return json.hasOwnProperty('changes')
+                } catch(err){
+                    
+                    logger.error(`ERROR: ${err.message}`, 'testUpdateItemsInList()');
+                }
+            }).then((pass) => {
+                if (pass){
+                    logger.info("PASS TESTCASE", 'testUpdateItemsInList()');
+                } else {
+                    logger.info("FAIL TESTCASE", 'testUpdateItemsInList()');
+                }
+            });
+        });
+
+    }catch(error){
+        logger.info("FAIL TESTCASE", 'testUpdateItemsInList()');
+        logger.error(`ERROR: ${err.message}`, 'testUpdateItemsInList()');
+    }
+}
+
+function testDeleteItemInList(){
+    let testcases = [
+        {
+            url: '/lists/1/items',
+            itemid: 88,
+            method: 'DELETE'
+        }
+    ];
+
+    testcases.forEach((value, index) => {
+        request('/lists/1/items', 'POST', `{"itemid": ${value.itemid}, "quantity": 2, "pick_up": 0}`).then(()=>{
+            request(`${value.url}/${value.itemid}`, value.method, '').then((data)=>{
+                try{
+                    let json = JSON.parse(data);
+                    return json.hasOwnProperty('changes')
+                } catch(err){
+                    
+                    logger.error(`ERROR: ${err.message}`, 'testDeleteItemInList()');
+                }
+            }).then((pass) => {
+                if (pass){
+                    logger.info("PASS TESTCASE", 'testDeleteItemInList()');
+                } else {
+                    logger.info("FAIL TESTCASE", 'testDeleteItemInList()');
+                }
+            });
+        });
+    });
+}
+
 
 (function mainline(){
     testcaseGetById();
@@ -309,4 +439,7 @@ function testGetItemsInShoppingList(){
     testCreateList();
     testUpdateList();
     testGetItemsInShoppingList();
+    testAddItemToList();
+    testUpdateItemsInList();
+    testDeleteItemInList();
 })();

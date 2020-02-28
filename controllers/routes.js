@@ -51,6 +51,9 @@ function routeListsRequest(request){
             case 3:
                 routeListsItemsOnly(request, parsedUrl, resolve, reject);
                 break;
+            case 4:
+                routeListsItemsOnlyWithId(request, parsedUrl, resolve, reject);
+                break;
             default:
                 reject(utils.createJSON(400, 'Request List Reject'));
                 break;
@@ -97,6 +100,29 @@ function routeListsItemsOnly(request, parsedUrl, resolve, reject){
             let message = utils.messageNotSupport(request.method, request.url);
             reject(utils.createJSON(400, message));
             break;
+    }
+}
+
+function routeListsItemsOnlyWithId(request, parsedUrl, resolve, reject){
+    let idList = parsedUrl.pathComponents[1];
+    let idItem = parsedUrl.pathComponents[3];
+    let regex = /^\d+$/;
+    if (regex.test(idList) && regex.test(idItem) && parsedUrl.pathComponents[2] == "items"){
+        switch(request.method){
+            case 'PUT':
+                listsHandler.handleUpdateItemInList(request, parsedUrl, resolve, reject);
+                break;
+            case 'DELETE':
+                listsHandler.handleDeleteItemInList(request, parsedUrl, resolve, reject);
+                break;
+            default:
+                let message = utils.messageNotSupport(request.method, request.url);
+                reject(utils.createJSON(400, message));
+                break;
+        }
+    } else {
+        let message = utils.messageNotSupport(request.method, request.url);
+        reject(utils.createJSON(400, message));
     }
 }
 
